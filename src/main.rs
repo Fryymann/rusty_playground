@@ -115,6 +115,4 @@ fn main(){
     kaleb.wave();
 
     kaleb.slap(&ian);
-
-
 }
