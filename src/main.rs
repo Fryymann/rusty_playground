@@ -1,80 +1,65 @@
-
-
-
-/**
- *
- * Todo - struct that represents an individual task
- *
- * TodoList - struct that manages Todos.
- *
- *
- */
-#[derive(Debug)]
-struct Todo {
-    description: String,
-    complete: bool,
+fn create_task(description: String) -> (String, bool) {
+    let task = (description, false);
+    task
 }
 
-impl Todo {
-    fn complete_task(&mut self) {
-        self.complete = true;
-    }
-
-
-    fn print(&self) {
-        println!("Description: {description} - Completed: {complete}", description = self.description, complete = self.complete);
-    }
+fn print_task(task: &(String, bool)) {
+    println!("{} - {}", task.0, task.1);
 }
+// fn get_task_string(task: &(String, bool)) -> String {
 
-struct TodoList {
-    list: Vec<Todo>,
-}
-
-impl TodoList {
-
-    fn add_todo(&mut self, desc: String) {
-        let new_todo = Todo{ description: desc, complete: false };
-        self.list.push(new_todo);
-    }
-
-    fn print_list(&self) {
-        for todo in &self.list {
-            todo.print();
-        }
-    }
-
-
-    fn complete_task(&mut self, index: usize) {
-        self.list[index].complete_task();
-    }
-
-    fn clear_completed_todos(&mut self) {
-        self.list = self.list.iter()
-            .filter(|tasks| tasks.complete)
-            .collect();
-    }
-}
-
-fn main(){
-
-    let mut task_list = TodoList{ list: Vec::new() };
-
-    task_list.add_todo( "Water the dogs".to_string() );
-    task_list.add_todo( "Learn structs in Rust".to_string() );
-
-    task_list.complete_task(1);
-    task_list.print_list();
-
-    task_list.clear_completed_todos();
-
-    task_list.print_list();
-}
-
-// let mut some_vec = vec![0, 10, 20, 30];
-// if let Some(index) = some_vec.iter().find(|value| **value == 10) {
-//     some_vec.swap_remove(*index);
 // }
 
-// if let Some(index) = some_vec.iter().position(|value| *value == 10) {
-//     some_vec.swap_remove(index);
-// }
+fn update_task(task: &mut (String, bool)) {
+    task.1 = !task.1;
+}
+
+fn delete_task(task: (String, bool)) {
+    println!("Deleting Task: {}...", task.0);
+}
+
+
+fn create_list() -> Vec<(String, bool)> {
+    let list: Vec<(String, bool)>= Vec::new();
+    list
+}
+
+fn print_list(list: &Vec<(String, bool)>) {
+    for task in list {
+        print_task(&task);
+    }
+    println!("-------------------------------");
+}
+
+fn update_list(list: &mut Vec<(String, bool)>, index: usize) {
+    update_task(&mut list[index]);
+}
+
+
+fn add_task(list: &mut Vec<(String, bool)>, new_task_description: String) {
+    let task = create_task(new_task_description);
+    list.push(task);
+}
+
+fn delete_task_on_list(list: &mut Vec<(String, bool)>, index: usize) {
+    list.remove(index);
+}
+
+fn delete_list(list: Vec<(String, bool)>) {
+    println!("Deleting Task List...");
+}
+
+
+
+fn main() {
+    let mut task_list = create_list();
+    add_task(&mut task_list, "this new thing".to_string());
+    add_task(&mut task_list, "this other thing".to_string());
+    print_list( &task_list );
+    update_list(&mut task_list, 0);
+    print_list( &task_list );
+
+    delete_task_on_list(&mut task_list, 1);
+    print_list( &task_list );
+
+}
