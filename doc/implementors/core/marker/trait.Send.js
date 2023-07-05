@@ -1,0 +1,4 @@
+(function() {var implementors = {
+"doc":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.70.0/core/marker/trait.Send.html\" title=\"trait core::marker::Send\">Send</a> for <a class=\"struct\" href=\"doc/struct.Task.html\" title=\"struct doc::Task\">Task</a>",1,["doc::Task"]]],
+"tasker":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.70.0/core/marker/trait.Send.html\" title=\"trait core::marker::Send\">Send</a> for <a class=\"struct\" href=\"tasker/struct.Task.html\" title=\"struct tasker::Task\">Task</a>",1,["tasker::Task"]],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.70.0/core/marker/trait.Send.html\" title=\"trait core::marker::Send\">Send</a> for <a class=\"struct\" href=\"tasker/struct.TaskList.html\" title=\"struct tasker::TaskList\">TaskList</a>",1,["tasker::TaskList"]]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

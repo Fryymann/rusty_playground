@@ -1,71 +1,87 @@
 use std::io;
+mod db;
 mod tasker;
+use tasker::TaskList;
+use mongodb::{bson::doc, options::{ClientOptions, ServerApi, ServerApiVersion}, Client};
 
-fn main() {
-    let mut task_list = tasker::create_list();
+
+fn get_input() -> String {
+    let mut r_input: String = String::new();
+    io::stdin().read_line(&mut r_input).unwrap();
+    let input = r_input.trim();
+    String::from(input)
+}
+
+fn task_manager() {
+    let mut task_list: TaskList = TaskList::new("Test List");
 
     loop {
+        println!("\n Commands: list, add, toggle, sort, help, quit");
         println!("Enter a command: ");
-        let mut input: String = String::new();
-        io::stdin().read_line(&mut input).unwrap();
-        let command: &str = input.trim();
+        let command = get_input();
 
         if command == "add" {
-            let mut new_input = String::new();
-            println!("Enter a task description: ");
-            io::stdin().read_line(&mut new_input).unwrap();
-            let description = input.trim();
+            println!("\nEnter a task description: ");
+            let description = get_input();
 
-            println!("Enter the task's priority: ");
-            io::stdin().read_line(&mut new_input).unwrap();
-            let priority = input.trim().to_string().parse::<u32>().unwrap();
-            // command = input.trim();
-            tasker::add_task(&mut task_list, description.to_string(), priority);
+            println!("\nEnter the task's priority: ");
+            let priority_str = get_input();
+            let int_priority = priority_str.parse::<i32>().expect("Shit went wrong...");
+
+            task_list.add_task(description, int_priority);
+        }
+
+        if command == "list" {
+            task_list.print();
+        }
+
+        if command == "toggle" {
+            println!("\nToggle task at which index?");
+            let r_index = get_input();
+            let index = r_index
+                .parse::<usize>()
+                .expect("Problem with creating index for update function.");
+            task_list.toggle_task(index);
+        }
+
+        if command == "sort" {
+            println!("Sorting tasks based on priority...");
+            task_list.sort();
+            task_list.print();
+        }
+
+        if command == "help" {
+            println!("Valid commands:");
+            println!("list, add, toggle, sort, print, quit\n");
         }
 
         if command == "quit" {
             break;
         }
     }
+}
 
-    // tasker::add_task(&mut task_list, "this new thing".to_string(), 3);
-    // tasker::print_list(&task_list);
 
-    // tasker::add_task(&mut task_list, "this other thing".to_string(), 1);
-    // tasker::print_list(&task_list);
+#[tokio::main]
+async fn main() -> mongodb::error::Result<()>  {
+    println!("Buiilding connection to MongoDB Atlas server...");
+    let uri = "mongodb+srv://ideans:code1@rusty1.znwsgiu.mongodb.net/";
+    let mut client_options = ClientOptions::parse(uri).await?;
 
-    // tasker::update_list(&mut task_list, 0);
+    let server_api = ServerApi::builder().version(ServerApiVersion::V1).build();
+    client_options.server_api = Some(server_api);
 
-    // tasker::prioritize_list(&mut task_list);
-    // tasker::print_list(&task_list);
+    println!("    Attempting connection to MongoDB...");
+    let client = Client::with_options(client_options)?;
+    println!("    Connection established. Client created.");
 
-    //  // Print a message asking for user input
-    //  println!("Please enter your name:");
+    println!("Attempting ping command on database 'Rusty'");
+    client
+        .database("rusty")
+        .run_command(doc! {"ping": 1}, None)
+        .await?;
 
-    //  // Create a mutable string to store the user's input
-    //  let mut input = String::new();
+    println!("Pinged your deployment. You successfully connected to MongoDB!");
 
-    //  // Read the user's input and store it in the 'input' string
-    //  io::stdin().read_line(&mut input).expect("Failed to read line");
-
-    //  // Trim any leading/trailing whitespaces or newline characters
-    //  let name = input.trim();
-
-    //  // Print the user's input
-    //  println!("Hello, {}!", name);
-
-    // Example input string
-    let input_str = "42";
-
-    // Parse the string to u32 using the parse method
-    match input_str.parse::<u32>() {
-        Ok(number) => {
-            // The parsing was successful, 'number' is of type u32
-            println!("Parsed value: {}", number);
-        }
-        Err(_) => {
-            // The parsing failed, handle the error here
-            println!("Failed to parse the input as u32.");
-        }
-    }
+    Ok(())
 }
