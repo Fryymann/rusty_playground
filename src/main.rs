@@ -1,9 +1,12 @@
 use std::io;
 mod db;
 mod tasker;
+use mongodb::{
+    bson::doc,
+    Client,
+    Database,
+};
 use tasker::TaskList;
-use mongodb::{bson::doc, options::{ClientOptions, ServerApi, ServerApiVersion}, Client};
-
 
 fn get_input() -> String {
     let mut r_input: String = String::new();
@@ -61,27 +64,21 @@ fn task_manager() {
     }
 }
 
+// #[tokio::main]
+// async fn do_db_stuff() -> mongodb::error::Result<Database> {
+//     let db = db::connect_db().unwrap();
 
-#[tokio::main]
-async fn main() -> mongodb::error::Result<()>  {
-    println!("Buiilding connection to MongoDB Atlas server...");
-    let uri = "mongodb+srv://ideans:code1@rusty1.znwsgiu.mongodb.net/";
-    let mut client_options = ClientOptions::parse(uri).await?;
+//     println!("Collections in Database:");
+//     for collection_name in db.list_collection_names(None).await? {
+//         println!("{}", collection_name);
+//     }
 
-    let server_api = ServerApi::builder().version(ServerApiVersion::V1).build();
-    client_options.server_api = Some(server_api);
+//     Ok(Database)
+// }
 
-    println!("    Attempting connection to MongoDB...");
-    let client = Client::with_options(client_options)?;
-    println!("    Connection established. Client created.");
-
-    println!("Attempting ping command on database 'Rusty'");
-    client
-        .database("rusty")
-        .run_command(doc! {"ping": 1}, None)
-        .await?;
-
-    println!("Pinged your deployment. You successfully connected to MongoDB!");
-
-    Ok(())
+fn main() {
+    let result = db::connect_db_sync();
+    // loop {
+    //     let command = get_input();
+    // }
 }
